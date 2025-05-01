@@ -24,6 +24,7 @@ final class CreateUsersTable extends AbstractMigration
             ->addColumn('last_name', 'string')
             ->addColumn('student_id', 'string')
             ->addColumn('email', 'string')
+            ->addColumn('phone', 'integer')
             ->addColumn('username', 'string')
             ->addColumn('password', 'string')
             ->addColumn('is_admin', 'integer', ['default' => 0])

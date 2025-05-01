@@ -19,7 +19,7 @@ class RecordSeeder extends AbstractSeed
         $data = [
             [
                 'user_id' => 1,
-                'document_type' => 'Vaccine',
+                'document_type' => 'Flu Vaccine',
                 'note' => 'test note',
                 'entry_date' => '2025-04-22',
                 'exp_date' => '2025-04-30',

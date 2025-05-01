@@ -1,0 +1,169 @@
+/* Header Card */
+.header-card {
+    background: linear-gradient(135deg, #0288d1 0%, #83cff5 100%);
+    border: none;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+}
+
+.header-card .card-body {
+    padding: 2rem;
+}
+
+.page-title {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Settings Cards */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: #2b3674;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+/* Form Elements */
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    color: #2b3674;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: #2b3674;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0288d1;
+    box-shadow: 0 0 0 2px rgba(2, 136, 209, 0.1);
+}
+
+/* Checkboxes and Switches */
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+.form-check:last-child {
+    margin-bottom: 0;
+}
+
+.form-check-input {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.2rem;
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: #2b3674;
+}
+
+.form-switch .form-check-input {
+    width: 2.5rem;
+    height: 1.25rem;
+    margin-top: 0.15rem;
+}
+
+.form-check-input:checked {
+    background-color: #0288d1;
+    border-color: #0288d1;
+}
+
+/* Notification Options */
+.notification-options,
+.alert-options,
+.password-requirements {
+    background-color: #f8fafc;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+/* Save Changes Section */
+.save-changes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #0288d1;
+    border-color: #0288d1;
+}
+
+.btn-primary:hover {
+    background-color: #026fa8;
+    border-color: #026fa8;
+}
+
+.btn-secondary {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #2b3674;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e8f0;
+    border-color: #cbd5e1;
+    color: #1a1f37;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .save-changes {
+        flex-direction: column-reverse;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+} 

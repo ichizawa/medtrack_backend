@@ -27,5 +27,10 @@ class Users
         ]);
         exit;
     }
+
+    public function login($email, $password) {
+        $result = $this->user->login($email, $password);
+        return $result;
+    }
 }
 

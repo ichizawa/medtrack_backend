@@ -15,22 +15,24 @@ class Register
 
     public function register($request)
     {
-        $required = ['first_name', 'last_name', 'student_id', 'email', 'username', 'password'];
+        $required = ['first_name', 'last_name', 'student_id',  'phone', 'email', 'username', 'password'];
+        $input = json_decode(file_get_contents('php://input'), true);
 
         foreach ($required as $field) {
-            if (empty($request->param($field))) {
+            if (empty($input[$field])) {
                 header('Content-Type: application/json', true, 400);
                 echo json_encode(['status' => false, 'message' => "Missing $field"]);
                 exit;
             }
         }
 
-        $firstName = $request->param('first_name');
-        $lastName = $request->param('last_name');
-        $studentId = $request->param('student_id');
-        $email = $request->param('email');
-        $username = $request->param('username');
-        $password = password_hash($request->param('password'), PASSWORD_DEFAULT);
+        $firstName = $input['first_name'] ?? null;
+        $lastName = $input['last_name'] ?? null;
+        $studentId = $input['student_id'] ?? null;
+        $phone = $input['phone'] ?? null;
+        $email = $input['email'] ?? null;
+        $username = $input['username'] ?? null;
+        $password = password_hash($input['password'], PASSWORD_DEFAULT);
 
         $query = "SELECT username FROM users WHERE username = ?";
         $stmt = $this->conn->prepare($query);
@@ -43,12 +45,13 @@ class Register
             exit;
         }
 
-        $query = "INSERT INTO users (first_name, last_name, student_id, email, username, password) VALUES (?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO users (first_name, last_name, phone, student_id, email, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param(
-            'ssssss',
+            'sssssss',
             $firstName,
             $lastName,
+            $phone,
             $studentId,
             $email,
             $username,

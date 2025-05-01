@@ -12,7 +12,7 @@ session_start();
 // $password = "osZNYd9gI0g9";
 // $dbname = "if0_36660621_genkicms";
 
-$servername = "localhost";
+$servername = $_ENV['DB_HOST'];
 $username = $_ENV['DB_USERNAME'];
 $password = $_ENV['DB_PASSWORD'];
 $dbname = $_ENV['DB_DATABASE'];
@@ -30,6 +30,18 @@ $datenow = date("Y-m-d");
 //     }
 
 // }
+
+$options = array(
+    'cluster' => 'ap1',
+    'useTLS' => true
+);
+$pusher = new Pusher\Pusher(
+    'a1d97d939eb60c02f4e0',
+    '4b4bbd3f1262a17dc0a3',
+    '1982314',
+    $options
+);
+
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
 if (!$conn) {

@@ -4,15 +4,18 @@ namespace Controllers;
 
 include_once __DIR__ . '/../config.php';
 
+use Exception;
 use Model\Records;
 
 class MedicalRecords
 {
     private $records;
+    private $pusher;
 
-    public function __construct($conn)
+    public function __construct($conn, $pusher)
     {
         $this->records = new Records($conn);
+        $this->pusher = $pusher;
     }
 
     public function index($request)
@@ -28,7 +31,7 @@ class MedicalRecords
 
         $records = $this->records->getRecordsById($id);
 
-        if(empty($records)) {
+        if (empty($records)) {
             http_response_code(404);
             echo json_encode([
                 'message' => 'No records found'
@@ -45,13 +48,16 @@ class MedicalRecords
 
     public function add($request)
     {
-        $user_id = $request->param('user_id');
-        $document_type = $request->param('document_type');
-        $note = $request->param('note');
-        $entry_date = $request->param('entry_date');
-        $exp_date = $request->param('exp_date');
+        $input = json_decode(file_get_contents('php://input'), true);
 
-        if(empty($user_id) || empty($document_type) || empty($entry_date) || empty($exp_date) || empty($note)) {
+        $user_id = $input['user_id'];
+        $record_name = $input['record_name'];
+        $document_type = $input['document_type'];
+        $note = $input['note'];
+        $exp_date = $input['exp_date'];
+        $file = $input['file'];
+
+        if (empty($user_id) || empty($document_type) || empty($exp_date) || empty($note) || empty($record_name)) {
             http_response_code(400);
             echo json_encode([
                 'message' => 'Missing required parameters'
@@ -59,27 +65,56 @@ class MedicalRecords
             exit;
         }
 
-        if(empty($_FILES['file_name'])) {
+        if (empty($input['file'])) {
             http_response_code(400);
             echo json_encode([
-                'message' => 'Missing file'
+                'message' => 'File is missing'
             ]);
             exit;
         }
 
-        $file_name = $_FILES['file_name']['name'];
+        $filename = basename($file['name']);
+        $filedata = $file['data']; // base64 string
+        $filetype = $file['type'];
 
-        if(!move_uploaded_file($_FILES['file_name']['tmp_name'], __DIR__ . "/../assets/public/records/" . $file_name)) {
+        $decoded = base64_decode($filedata);
+        $savePath = __DIR__ . '/../assets/public/records/' . $filename;
+
+        file_put_contents($savePath, $decoded);
+
+        $res = $this->records->uploadRecords([
+            'user_id' => $user_id,
+            'document_name' => $record_name,
+            'document_type' => $document_type,
+            'note' => $note,
+            'exp_date' => $exp_date,
+            'file_name' => $filename
+        ]);
+
+        if ($res == 0) {
             http_response_code(500);
             echo json_encode([
-                'message' => 'Failed to upload the file'
+                'message' => 'Error uploading file, please try again'
             ]);
             exit;
         }
 
+        if ($res == 2) {
+            http_response_code(500);
+            echo json_encode([
+                'message' => 'Record already exists'
+            ]);
+            exit;
+        }
+
+        // if($res == 1){
+        //     $this->pusher->trigger('my-record', 'upload-record', $res);
+        // }
+        $this->pusher->trigger('my-record', 'upload-record', 'test-data');
         http_response_code(200);
         echo json_encode([
-            'message' => 'File uploaded successfully',
+            'message' => 'Record uploaded successfully',
+            // 'data' => $res
         ]);
         exit;
     }
@@ -88,7 +123,7 @@ class MedicalRecords
     {
         $id = $request->param('id');
 
-        if(empty($id)) {
+        if (empty($id)) {
             http_response_code(400);
             echo json_encode([
                 'message' => 'ID parameter is missing'
@@ -98,7 +133,7 @@ class MedicalRecords
 
         $result = $this->records->findExpiration($id);
 
-        if(empty($result)) {
+        if (empty($result)) {
             http_response_code(404);
             echo json_encode([
                 'message' => 'No records found'
@@ -110,6 +145,34 @@ class MedicalRecords
         echo json_encode([
             'message' => 'Expiration Record Found',
             'records' => $result
+        ]);
+        exit;
+    }
+
+    public function specific($request)
+    {
+        $id = $request->param('id');
+        if (empty($id)) {
+            http_response_code(400);
+            echo json_encode([
+                'message' => 'ID parameter is missing'
+            ]);
+            exit;
+        }
+
+        $record = $this->records->getSpecificRecordById($id);
+
+        if (empty($records)) {
+            http_response_code(404);
+            echo json_encode([
+                'message' => 'No records found'
+            ]);
+            exit;
+        }
+
+        http_response_code(200);
+        echo json_encode([
+            'record' => $record
         ]);
         exit;
     }

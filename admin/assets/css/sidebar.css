@@ -1,0 +1,133 @@
+#sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  background: linear-gradient(180deg, #0288d1 0%, #0288d1 100%);
+  height: 100vh;
+  position: fixed;
+  z-index: 1000;
+  transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin: 10px;
+  margin-right: 40px;
+  border-radius: 20px;
+}
+
+#sidebar.active {
+  margin-left: -280px;
+}
+
+.sidebar-header {
+  padding: 0.5rem 1rem 2rem;
+  background: transparent;
+  border-bottom: none;
+}
+
+.sidebar-header h3 {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 0;
+  text-align: center;
+}
+
+#sidebar ul.components {
+  padding: 0;
+}
+
+#sidebar ul li {
+  margin-bottom: 0.5rem;
+}
+
+#sidebar ul li a {
+  padding: 0.875rem 1.25rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  color: #fff; /* Default text color */
+  text-decoration: none;
+  transition: all 0.3s;
+  border-radius: 12px;
+  /* margin: 0; */
+  font-weight: 500;
+}
+
+#sidebar ul li a i {
+  margin-right: 12px;
+  width: 20px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+/* Active Link Styles: White background and Blue text */
+#sidebar ul li.active > a,
+#sidebar ul li a.active {
+  background: #fff; /* White background */
+  color: #0288d1; /* Blue text */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Non-active links: Hover effect with inverse color scheme */
+#sidebar ul li a:hover:not(.active) {
+  background: #fff; /* White background */
+  color: #0288d1; /* Blue text */
+}
+
+/* Submenu Styles */
+#sidebar ul ul {
+  background: transparent;
+  padding-left: 3rem;
+  margin-top: 0.25rem;
+}
+
+#sidebar ul ul a {
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  opacity: 0.8;
+}
+
+#sidebar ul ul a:hover {
+  opacity: 1;
+}
+
+/* Collapse Toggle Icon */
+.dropdown-toggle::after {
+  float: right;
+  margin-top: 0;
+  margin-left: auto;
+  transition: transform 0.3s;
+}
+
+.dropdown-toggle[aria-expanded="true"]::after {
+  transform: rotate(180deg);
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  #sidebar {
+    margin-left: -280px;
+    box-shadow: none;
+  }
+
+  #sidebar.active {
+    margin-left: 0;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .overlay.active {
+    display: block;
+    opacity: 1;
+  }
+}
+

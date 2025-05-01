@@ -13,10 +13,14 @@ class Login
         $this->conn = $conn;
     }
 
+
     public function login($request)
     {
-        $username = $request->param('username');
-        $password = $request->param('password');
+        // $username = $request->param('username');
+        // $password = $request->param('password');
+        $input = json_decode(file_get_contents('php://input'), true);
+        $username = $input['username'] ?? null;
+        $password = $input['password'] ?? null;
 
         if (!$username || !$password) {
             header('Content-Type: application/json', true, 400);

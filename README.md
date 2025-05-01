@@ -13,11 +13,11 @@ Plain PHP Project that serves as a backend for web and mobile applications. It i
 ## 📥 Installation
 1. **Clone the repository:**  
    ```sh
-   git 
+   git https://github.com/ichizawa/medtrack_backend.git
    ```
 2. **Navigate to the project directory:**  
    ```sh
-   cd 
+   cd medtrack_backend
    ```
 3. **Install dependencies:**  
    ```sh

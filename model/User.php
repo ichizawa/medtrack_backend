@@ -37,5 +37,21 @@ class User
 
         return $result->fetch_object();
     }
+
+    public function login($email, $password)
+    {
+        $sql = "SELECT * 
+        FROM users 
+        WHERE email = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_object();
+        if (password_verify($password, $user->password)) {
+            return $user;
+        }
+        return null;
+    }
 }
 ?>

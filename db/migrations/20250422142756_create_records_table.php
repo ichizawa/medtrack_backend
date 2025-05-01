@@ -21,12 +21,14 @@ final class CreateRecordsTable extends AbstractMigration
     {
         $table = $this->table('records');
         $table->addColumn('user_id', 'integer')
+            ->addColumn('document_name', 'string')
             ->addColumn('document_type', 'string')
             ->addColumn('note', 'string')
             ->addColumn('entry_date', 'date')
             ->addColumn('exp_date', 'date')
             ->addColumn('file_name', 'string')
             ->addColumn('status', 'integer')
+            ->addColumn('is_archived', 'integer', ['default' => 0])
             ->addColumn('deleted_at', 'timestamp', ['null' => true])
             ->addColumn('updated_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
