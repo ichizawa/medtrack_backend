@@ -1,0 +1,12 @@
+{
+  "name": "medtrack_backend",
+  "version": "1.0.0",
+  "description": "Plain PHP Project that serves as a backend for web and mobile applications. It includes essential configurations, middleware, and routes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

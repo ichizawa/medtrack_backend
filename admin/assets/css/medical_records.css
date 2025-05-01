@@ -330,6 +330,37 @@
     background-color: #f8fafc;
     color: #718096;
 }
+.modal-content {
+    border-radius: 1.25rem;
+    border: none;
+  }
+  
+  .modal-header {
+    border-bottom: none;
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+  }
+  
+  .modal-body label {
+    font-size: 0.95rem;
+    color: #333;
+  }
+  
+  .modal-body p {
+    font-size: 0.92rem;
+    margin-bottom: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .modal-body .row > div {
+      margin-bottom: 1rem;
+    }
+  
+    .modal-content {
+      padding: 10px;
+    }
+  }
+  
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -359,5 +390,45 @@
 
     .stat-card {
         margin-bottom: 1rem;
+    }
+    .record-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px 32px;
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    .record-details-grid div {
+        padding: 8px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #dee2e6;
+    }
+
+    .modal-body span {
+        color: #333;
+        font-weight: 500;
+        margin-left: 6px;
+    }
+
+    @media (max-width: 768px) {
+        .record-details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-content {
+            margin: 10px;
+        }
+
+        .modal-body {
+            font-size: 14px;
+        }
     }
 } 

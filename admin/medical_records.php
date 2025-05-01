@@ -130,7 +130,7 @@ include __DIR__ . '/../conf.php';
                                         $qr = "SELECT * FROM users WHERE id = '" . $row['user_id'] . "'";
                                         $result2 = $conn->query($qr);
                                         $row2 = $result2->fetch_assoc();
-                                        ?>
+                                ?>
                                         <tr>
                                             <td><?= $row['document_name'] ?></td>
                                             <td><?= $row2['id'] ?></td>
@@ -145,8 +145,10 @@ include __DIR__ . '/../conf.php';
                                             <td><span class="status-badge completed"><?= $row['is_archived'] ? 'Archived' : 'Submitted' ?></span></td>
                                             <td>
                                                 <div class="actions">
-                                                    <button class="btn btn-icon" title="View Record"
-                                                        onclick="viewRecord(this)"><i class="fas fa-eye"></i></button>
+                                                    <a href="view_record.php?id=123" class="btn btn-icon" title="View Record">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+
                                                     <button class="btn btn-icon" title="Download"
                                                         onclick="downloadRecord(this)"><i class="fas fa-download"></i></button>
                                                     <button class="btn btn-icon" title="Delete" onclick="deleteRecord(this)"><i
@@ -154,7 +156,7 @@ include __DIR__ . '/../conf.php';
                                                 </div>
                                             </td>
                                         </tr>
-                                        <?php
+                                <?php
                                     }
                                 }
                                 ?>
@@ -212,6 +214,30 @@ include __DIR__ . '/../conf.php';
                         </nav>
                     </div>
 
+                    <!-- View Record Modal -->
+                    <div class="modal fade" id="viewRecordModal" tabindex="-1" aria-labelledby="viewRecordLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content shadow-lg border-0">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="viewRecordLabel">📄 Record Details</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="record-details-grid">
+                                        <div><strong>ID:</strong> <span id="recordId"></span></div>
+                                        <div><strong>Name:</strong> <span id="recordName"></span></div>
+                                        <div><strong>Status:</strong> <span id="recordStatus"></span></div>
+                                        <div><strong>Notes:</strong> <span id="recordNotes"></span></div>
+                                        <!-- Add more fields here -->
+                                    </div>
+                                </div>
+                                <div class="modal-footer bg-light">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -241,7 +267,7 @@ include __DIR__ . '/../conf.php';
     }
 
     // Search Filter
-    document.getElementById('searchInput').addEventListener('keyup', function () {
+    document.getElementById('searchInput').addEventListener('keyup', function() {
         const input = this.value.toLowerCase();
         const rows = document.querySelectorAll('.medical-records-table tbody tr');
 
@@ -304,11 +330,19 @@ include __DIR__ . '/../conf.php';
         });
     }
 
-    // View Record
     function viewRecord(button) {
         const row = button.closest('tr');
-        const studentName = row.querySelector('.student-info h6').innerText;
-        alert('Viewing record for ' + studentName);
+        const cells = row.querySelectorAll('td');
+
+        // Example: adjust indexes based on your table layout
+        document.getElementById('recordId').textContent = cells[0].textContent;
+        document.getElementById('recordName').textContent = cells[1].textContent;
+        document.getElementById('recordStatus').textContent = cells[2].textContent;
+        document.getElementById('recordNotes').textContent = cells[3].textContent;
+
+        // Show modal (Bootstrap 5)
+        const modal = new bootstrap.Modal(document.getElementById('viewRecordModal'));
+        modal.show();
     }
 
     // Download Record

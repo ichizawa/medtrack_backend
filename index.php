@@ -26,6 +26,7 @@ use API\Logout;
 use Controllers\Users;
 use Controllers\MedicalRecords;
 use Controllers\Dashboard;
+use Controllers\Profile; 
 
 $router = new Klein();
 
@@ -37,6 +38,7 @@ $logout = new Logout($conn);
 $medical_records = new MedicalRecords($conn, $pusher);
 $user = new Users($conn);
 $dashboard = new Dashboard($conn);
+$profile = new Profile($conn);
 
 // Routes
 $router->respond('GET', '/', function ($request) use ($login) {
@@ -65,6 +67,10 @@ $router->respond('GET', '/api/dashboard/[:id]', function ($request) use ($dashbo
 // User
 $router->respond('GET', '/api/get-user-details/[:id]', function ($request) use ($user) {
     return $user->index($request);
+});
+// Profile
+$router->respond('GET', '/api/profile/[:id]', function ($request) use ($profile) {
+    return $profile->getProfile($request);
 });
 
 // Medical Records

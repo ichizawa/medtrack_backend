@@ -29,13 +29,13 @@ ob_start();
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="firstName">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" value="Lowela">
+                                    <input type="text" class="form-control" id="firstName" name="firstName" value="<?= htmlspecialchars($profile['first_name'] ?? '') ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="lastName">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" value="Relacion">
+                                    <input type="text" class="form-control" id="lastName" name="lastName" value="<?= htmlspecialchars($profile['last_name'] ?? '') ?>">
                                 </div>
                             </div>
                         </div>
@@ -43,19 +43,15 @@ ob_start();
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="email">Email Address</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="lowela.relacion@medtrack.com">
+                                    <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($profile['email'] ?? '') ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" value="+63 912 345 6789">
+                                    <input type="tel" class="form-control" id="phone" name="phone" value="<?= htmlspecialchars($profile['phone'] ?? '') ?>">
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="bio">Bio</label>
-                            <textarea class="form-control" id="bio" name="bio" rows="3">Administrator at MedTrack System, managing student medical records and healthcare information.</textarea>
                         </div>
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -103,10 +99,44 @@ ob_start();
                 </div>
             </div>
         </div>
+
     </div>
 </div>
+
+<script>
+    const userId = 1; // Replace this with dynamic ID based on login
+
+    fetch(`/api/profile/${userId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                const profile = data.data;
+                document.getElementById('firstName').value = profile.first_name;
+                document.getElementById('lastName').value = profile.last_name;
+                document.getElementById('email').value = profile.email;
+                document.getElementById('phone').value = profile.phone;
+
+                document.querySelector('.page-title').textContent = `${profile.first_name} ${profile.last_name}`;
+                // Remove subtitle if 'role' is not available
+                // document.querySelector('.page-subtitle').textContent = profile.role;
+            } else {
+                alert('Profile not found');
+            }
+        })
+
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('There was an error fetching the profile.');
+        });
+</script>
+
 
 <?php
 $pageContent = ob_get_clean();
 include './Navigations/navbar.php';
-?> 
+?>
