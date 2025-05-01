@@ -53,14 +53,14 @@ include __DIR__ . '/../conf.php';
                                 $result = $conn->query($qry);
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
-                                        ?>
+                                ?>
                                         <tr>
-                                            <td><?=$row['id']?></td>
+                                            <td><?= $row['id'] ?></td>
                                             <td>
                                                 <div class="student-info d-flex align-items-center">
                                                     <img src="assets/img/photo.png" alt="Student" class="student-avatar me-2">
                                                     <div>
-                                                        <h6 class="mb-0"><?=$row['first_name']?> <?=$row['last_name']?></h6>
+                                                        <h6 class="mb-0"><?= $row['first_name'] ?> <?= $row['last_name'] ?></h6>
                                                         <!-- <small>Nursing - Year 3</small> -->
                                                     </div>
                                                 </div>
@@ -70,8 +70,10 @@ include __DIR__ . '/../conf.php';
                                             <td><span class="status-badge bg-success"><?= $row['is_active'] ? 'Active' : 'Inactive' ?></span></td>
                                             <td>
                                                 <div class="actions">
-                                                    <button class="btn btn-icon" title="View Record"><i
-                                                            class="fas fa-eye"></i></button>
+                                                    <button type="button" class="btn btn-icon" title="View Record"
+                                                        onclick="window.location.href='student_details.php?id=<?= $row['id'] ?>'">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
                                                     <button class="btn btn-icon" title="Edit Record"><i
                                                             class="fas fa-edit"></i></button>
                                                     <button class="btn btn-icon" title="Delete Record"><i
@@ -79,7 +81,7 @@ include __DIR__ . '/../conf.php';
                                                 </div>
                                             </td>
                                         </tr>
-                                        <?php
+                                <?php
                                     }
                                 }
                                 ?>
@@ -154,7 +156,7 @@ include __DIR__ . '/../conf.php';
 
 <!-- Sort/Filter/Search Script -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const table = document.querySelector('.student-records-table');
         const headers = table.querySelectorAll('thead th[data-index]');
         const icons = table.querySelectorAll('.sort-icon');
@@ -207,7 +209,7 @@ include __DIR__ . '/../conf.php';
             });
         });
 
-        document.getElementById('search-input').addEventListener('input', function () {
+        document.getElementById('search-input').addEventListener('input', function() {
             const value = this.value.toLowerCase();
             const rows = table.querySelectorAll('tbody tr');
 

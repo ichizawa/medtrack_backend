@@ -1,6 +1,18 @@
 <?php
 require_once './Auth/auth_check.php';
-ob_start();
+include __DIR__ . '/../config.php';
+
+require_once './Auth/auth_check.php';
+include __DIR__ . '/../config.php';
+
+// Query to get the total number of rows in the 'users' table (total students)
+$totalStudentsStmt = $conn->prepare("SELECT COUNT(id) AS total FROM users");
+$totalStudentsStmt->execute();
+$totalStudentsResult = $totalStudentsStmt->get_result();
+$totalStudentsData = $totalStudentsResult->fetch_assoc();
+$totalStudents = $totalStudentsData['total']; // Store the total count of students
+$totalStudentsStmt->close();
+
 ?>
 <link rel="stylesheet" href="assets/css/dashboard.css">
 
@@ -28,11 +40,11 @@ ob_start();
         <div class="col-sm-6 col-md-3">
             <a href="list_of_students.php" style="text-decoration: none; color: inherit;">
                 <div class="card dashboard-card">
-                    <div class="card-body ">
+                    <div class="card-body">
                         <div class="card-icon students mb-3">
                             <i class="fas fa-user-md"></i>
                         </div>
-                        <h3 class="stat-number">856</h3>
+                        <h3 class="stat-number"><?= $totalStudents ?></h3> 
                         <p class="stat-label">Total Students</p>
                         <div class="stat-progress">
                             <div class="progress">

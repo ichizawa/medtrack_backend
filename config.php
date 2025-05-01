@@ -5,7 +5,9 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 ob_start();
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // $servername = "sql209.infinityfree.com";
 // $username = "if0_36660621";
