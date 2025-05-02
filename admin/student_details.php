@@ -2,7 +2,7 @@
 require_once './Auth/auth_check.php';
 ob_start();
 
-include __DIR__ . '/../config.php';
+include __DIR__ . '/../conf.php';
 
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $studentId = $_GET['id'];

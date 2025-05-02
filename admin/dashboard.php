@@ -1,9 +1,6 @@
 <?php
 require_once './Auth/auth_check.php';
-include __DIR__ . '/../config.php';
-
-require_once './Auth/auth_check.php';
-include __DIR__ . '/../config.php';
+include __DIR__ . '/../conf.php';
 
 // Query to get the total number of rows in the 'users' table (total students)
 $totalStudentsStmt = $conn->prepare("SELECT COUNT(id) AS total FROM users");
@@ -13,6 +10,9 @@ $totalStudentsData = $totalStudentsResult->fetch_assoc();
 $totalStudents = $totalStudentsData['total']; // Store the total count of students
 $totalStudentsStmt->close();
 
+$totalRecords = $conn->query("SELECT COUNT(id) AS total FROM records")->fetch_object()->total;
+$pending = $conn->query("SELECT COUNT(id) AS total FROM records WHERE is_archived = 0 AND CURDATE() < exp_date")->fetch_object()->total;
+$expired = $conn->query("SELECT COUNT(id) AS total FROM records WHERE is_archived = 0 AND CURDATE() > exp_date")->fetch_object()->total;
 ?>
 <link rel="stylesheet" href="assets/css/dashboard.css">
 
@@ -44,7 +44,7 @@ $totalStudentsStmt->close();
                         <div class="card-icon students mb-3">
                             <i class="fas fa-user-md"></i>
                         </div>
-                        <h3 class="stat-number"><?= $totalStudents ?></h3> 
+                        <h3 class="stat-number"><?= $totalStudents ?></h3>
                         <p class="stat-label">Total Students</p>
                         <div class="stat-progress">
                             <div class="progress">
@@ -65,7 +65,7 @@ $totalStudentsStmt->close();
                         <div class="card-icon records mb-3">
                             <i class="fas fa-file-medical"></i>
                         </div>
-                        <h3 class="stat-number">2,450</h3>
+                        <h3 class="stat-number"><?= $totalRecords ?></h3>
                         <p class="stat-label">Medical Records</p>
                         <div class="stat-progress">
                             <div class="progress">
@@ -86,7 +86,7 @@ $totalStudentsStmt->close();
                         <div class="card-icon pending mb-3">
                             <i class="fas fa-syringe"></i>
                         </div>
-                        <h3 class="stat-number">128</h3>
+                        <h3 class="stat-number"><?= $pending ?></h3>
                         <p class="stat-label">Pending</p>
                         <div class="stat-progress">
                             <div class="progress">
@@ -107,7 +107,7 @@ $totalStudentsStmt->close();
                         <div class="card-icon expiring mb-3">
                             <i class="fas fa-exclamation-triangle"></i>
                         </div>
-                        <h3 class="stat-number">45</h3>
+                        <h3 class="stat-number"><?= $expired ?></h3>
                         <p class="stat-label">Expired Records</p>
                         <div class="stat-progress">
                             <div class="progress">
@@ -131,8 +131,30 @@ $totalStudentsStmt->close();
                 </div>
                 <div class="card-body">
                     <div class="activity-list">
-                        <!-- Activity Item 1 -->
-                        <div class="activity-item">
+                        <?php
+                        $qry = 'SELECT * FROM records ORDER BY id DESC LIMIT 5';
+                        $result = $conn->query($qry);
+                        while ($row = $result->fetch_assoc()) {
+                            $getuser = "SELECT * FROM users WHERE id = '" . $row['user_id'] . "'";
+                            $result2 = $conn->query($getuser);
+                            $row2 = $result2->fetch_assoc();
+                            ?>
+                            <div class="activity-item">
+                                <div class="activity-icon bg-primary">
+                                    <i class="fas fa-file-medical"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h6><?= $row['is_archived'] ? 'Archived Record' : 'Medical Record' ?></h6>
+                                    <p><?= $row2['first_name'] . ' ' . $row2['last_name'] ?> Uploaded</p>
+                                    <small class="text-muted"><?= $row['document_type'] ?> Record</small>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                        ;
+
+                        ?>
+                        <!-- <div class="activity-item">
                             <div class="activity-icon bg-primary">
                                 <i class="fas fa-file-medical"></i>
                             </div>
@@ -143,7 +165,7 @@ $totalStudentsStmt->close();
                             </div>
                         </div>
 
-                        <!-- Activity Item 2 -->
+                       
                         <div class="activity-item">
                             <div class="activity-icon bg-warning">
                                 <i class="fas fa-syringe"></i>
@@ -155,7 +177,7 @@ $totalStudentsStmt->close();
                             </div>
                         </div>
 
-                        <!-- Activity Item 3 -->
+                        
                         <div class="activity-item">
                             <div class="activity-icon bg-success">
                                 <i class="fas fa-check"></i>
@@ -165,7 +187,7 @@ $totalStudentsStmt->close();
                                 <p>Batch verification completed for 25 patients</p>
                                 <small class="text-muted">1 day ago</small>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

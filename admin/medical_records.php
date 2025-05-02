@@ -55,10 +55,13 @@ include __DIR__ . '/../conf.php';
                                 <select id="filterStudent" class="form-select shadow-sm">
                                     <option value="" selected disabled>Select Student Name</option>
                                     <option value="All">All Students</option>
-                                    <option value="John Doe">John Doe</option>
-                                    <option value="Jane Smith">Jane Smith</option>
-                                    <option value="Mark Johnson">Mark Johnson</option>
-                                    <option value="Emma Brown">Emma Brown</option>
+                                    <?php
+                                    $qry = 'SELECT * FROM users';
+                                    $result = $conn->query($qry);
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<option value="' . $row['id'] . '">' . $row['first_name'] . ' ' . $row['last_name'] . '</option>';
+                                    }
+                                    ?>
                                     <!-- Add more student names here -->
                                 </select>
                             </div>
@@ -80,10 +83,23 @@ include __DIR__ . '/../conf.php';
                                 <select id="filterDocument" class="form-select shadow-sm">
                                     <option value="" selected disabled>Select Document Type</option>
                                     <option value="All">All Document</option>
-                                    <option value="COVID-19 Vaccination">COVID-19 Vaccination</option>
-                                    <option value="Physical Examination">Physical Examination</option>
-                                    <option value="Dental Checkup">Dental Checkup</option>
-                                    <option value="Vision Screening">Vision Screening</option>
+                                    <?php
+                                    $documents = [
+                                        'Flu Vaccine' => 1,
+                                        'Pneumococcal Vaccine' => 2,
+                                        'Hepatitis B Vaccine' => 3,
+                                        'Covid-19 Vaccine' => 4,
+                                        'X-Ray Result' => 5,
+                                        'CBC Result' => 6,
+                                        'Urine Test' => 7,
+                                        'Fecal Test' => 8,
+                                        'Stool Series' => 9,
+                                        'Medical Certificate' => 10,
+                                    ];
+                                    foreach ($documents as $value => $key) {
+                                        echo '<option value="' . $key . '">' . $value . '</option>';
+                                    }
+                                    ?>
                                     <!-- Add more document types here -->
                                 </select>
                             </div>
@@ -130,24 +146,31 @@ include __DIR__ . '/../conf.php';
                                         $qr = "SELECT * FROM users WHERE id = '" . $row['user_id'] . "'";
                                         $result2 = $conn->query($qr);
                                         $row2 = $result2->fetch_assoc();
-                                ?>
+                                        ?>
                                         <tr>
                                             <td><?= $row['document_name'] ?></td>
                                             <td><?= $row2['id'] ?></td>
                                             <td>
                                                 <div>
-                                                    <span><?= $row2['first_name'] ?> <?= $row2['last_name'] ?></span>
+                                                    <span><?= $row2['first_name'] ?>         <?= $row2['last_name'] ?></span>
                                                 </div>
                                             </td>
                                             <td><?= $row['document_type'] ?></td>
-                                            <td><a href="../../assets/public/records/<?= urlencode(trim($row['file_name'])) ?>" download>View File</a></td>
+                                            <td><a href="../../assets/public/records/<?= urlencode(trim($row['file_name'])) ?>"
+                                                    download>View File</a></td>
                                             <td><?= date('Y-m-d', strtotime($row['exp_date'])) ?></td>
-                                            <td><span class="status-badge completed"><?= $row['is_archived'] ? 'Archived' : 'Submitted' ?></span></td>
+                                            <td><span
+                                                    class="status-badge completed"><?= $row['is_archived'] ? 'Archived' : 'Submitted' ?></span>
+                                            </td>
                                             <td>
                                                 <div class="actions">
-                                                    <a href="view_record.php?id=123" class="btn btn-icon" title="View Record">
+                                                    <a href="#" class="btn btn-icon view-record" data-bs-toggle="modal"
+                                                        data-bs-target="#viewRecordModal"
+                                                        data-record='<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8') ?>'
+                                                        title="View Record">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
+
 
                                                     <button class="btn btn-icon" title="Download"
                                                         onclick="downloadRecord(this)"><i class="fas fa-download"></i></button>
@@ -156,53 +179,15 @@ include __DIR__ . '/../conf.php';
                                                 </div>
                                             </td>
                                         </tr>
-                                <?php
+                                        <?php
                                     }
                                 }
                                 ?>
                             </tbody>
-                            <!-- <tbody>
-                                <tr>
-                                    <td>COVID-19 Vaccination Record</td>
-                                    <td>STU-05940</td>
-                                    <td>
-                                        <div>
-                                            <span>John Doe</span>
-                                        </div>
-                                    </td>
-                                    <td>COVID-19 Vaccination</td>
-                                    <td><a href="assets/uploads/record1.pdf" download>View File</a></td>
-                                    <td>Jan 15, 2025</td>
-                                    <td><span class="status-badge completed">Completed</span></td>
-                                    <td>
-                                        <div class="actions">
-                                            <button class="btn btn-icon" title="View Record" onclick="viewRecord(this)"><i class="fas fa-eye"></i></button>
-                                            <button class="btn btn-icon" title="Download" onclick="downloadRecord(this)"><i class="fas fa-download"></i></button>
-                                            <button class="btn btn-icon" title="Delete" onclick="deleteRecord(this)"><i class="fas fa-trash"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Physical Examination Record</td>
-                                    <td>STU-05941</td>
-                                    <td>Jane Smith</td>
-                                    <td>Physical Examination</td>
-                                    <td><a href="assets/uploads/record2.pdf" download>View File</a></td>
-                                    <td>Feb 01, 2025</td>
-                                    <td><span class="status-badge expiring">Expiring Soon</span></td>
-                                    <td>
-                                        <div class="actions">
-                                            <button class="btn btn-icon" title="View Record" onclick="viewRecord(this)"><i class="fas fa-eye"></i></button>
-                                            <button class="btn btn-icon" title="Download" onclick="downloadRecord(this)"><i class="fas fa-download"></i></button>
-                                            <button class="btn btn-icon" title="Delete" onclick="deleteRecord(this)"><i class="fas fa-trash"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody> -->
+
                         </table>
                     </div>
 
-                    <!-- Pagination -->
                     <div class="pagination-wrapper">
                         <div class="pagination-info">Showing 1 to 5 of 10 entries</div>
                         <nav aria-label="Page navigation">
@@ -214,13 +199,14 @@ include __DIR__ . '/../conf.php';
                         </nav>
                     </div>
 
-                    <!-- View Record Modal -->
-                    <div class="modal fade" id="viewRecordModal" tabindex="-1" aria-labelledby="viewRecordLabel" aria-hidden="true">
+                    <div class="modal fade" id="viewRecordModal" tabindex="-1" aria-labelledby="viewRecordLabel"
+                        aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content shadow-lg border-0">
                                 <div class="modal-header bg-primary text-white">
                                     <h5 class="modal-title" id="viewRecordLabel">📄 Record Details</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="record-details-grid">
@@ -228,11 +214,11 @@ include __DIR__ . '/../conf.php';
                                         <div><strong>Name:</strong> <span id="recordName"></span></div>
                                         <div><strong>Status:</strong> <span id="recordStatus"></span></div>
                                         <div><strong>Notes:</strong> <span id="recordNotes"></span></div>
-                                        <!-- Add more fields here -->
                                     </div>
                                 </div>
                                 <div class="modal-footer bg-light">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -267,7 +253,7 @@ include __DIR__ . '/../conf.php';
     }
 
     // Search Filter
-    document.getElementById('searchInput').addEventListener('keyup', function() {
+    document.getElementById('searchInput').addEventListener('keyup', function () {
         const input = this.value.toLowerCase();
         const rows = document.querySelectorAll('.medical-records-table tbody tr');
 
@@ -303,6 +289,18 @@ include __DIR__ . '/../conf.php';
         rows.forEach(row => table.tBodies[0].appendChild(row));
     }
 
+    document.querySelectorAll('.view-record').forEach(button => {
+        button.addEventListener('click', function () {
+            const recordData = JSON.parse(this.getAttribute('data-record'));
+            console.log(recordData);
+
+            document.getElementById('recordId').innerText = recordData.id;
+            document.getElementById('recordName').innerText = recordData.document_name;
+            document.getElementById('recordStatus').innerText = recordData.is_archived ? 'Archived' : 'Submitted';
+            document.getElementById('recordNotes').innerText = recordData.note || 'No notes';
+        });
+    });
+
 
     function applyFilters() {
         // Get the selected filter values
@@ -328,21 +326,6 @@ include __DIR__ . '/../conf.php';
             // Show the row if it matches all selected filter options, otherwise hide it
             row.style.display = (matchStudent && matchStatus && matchDocType) ? '' : 'none';
         });
-    }
-
-    function viewRecord(button) {
-        const row = button.closest('tr');
-        const cells = row.querySelectorAll('td');
-
-        // Example: adjust indexes based on your table layout
-        document.getElementById('recordId').textContent = cells[0].textContent;
-        document.getElementById('recordName').textContent = cells[1].textContent;
-        document.getElementById('recordStatus').textContent = cells[2].textContent;
-        document.getElementById('recordNotes').textContent = cells[3].textContent;
-
-        // Show modal (Bootstrap 5)
-        const modal = new bootstrap.Modal(document.getElementById('viewRecordModal'));
-        modal.show();
     }
 
     // Download Record

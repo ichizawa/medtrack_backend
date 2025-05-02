@@ -24,11 +24,12 @@ ob_start();
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title">Personal Information</h5>
-                    <form class="profile-form" id="personalInfoForm">
+                    <form class="profile-form" action="update_profile.php" method="POST" id="personalInfoForm">
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="firstName">First Name</label>
+                                    <!-- <input type="text" class="form-control" id="user_id" name="user_id" value="<?= htmlspecialchars($SESSION['user_id'] ?? '') ?>"> -->
                                     <input type="text" class="form-control" id="firstName" name="firstName" value="<?= htmlspecialchars($profile['first_name'] ?? '') ?>">
                                 </div>
                             </div>

@@ -57,6 +57,7 @@
         $query = "SELECT * FROM users WHERE id = $userid";
         $qr = $conn->query($query);
         $user = $qr->fetch_object();
+
     ?>
     <div class="wrapper">
         <!-- Sidebar -->
