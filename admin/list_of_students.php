@@ -1,10 +1,44 @@
 <?php
 require_once './Auth/auth_check.php';
 ob_start();
-
 include __DIR__ . '/../conf.php';
 
+// Handle Deletion
+if (isset($_POST['delete_id'])) {
+    $delete_id = $_POST['delete_id'];
+    $delete_query = "DELETE FROM users WHERE id = $delete_id";
+    if ($conn->query($delete_query) === TRUE) {
+        header("Location: list_of_students.php"); // Redirect after deletion
+        exit();
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
+}
+
+// Handle Update (Save Changes)
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id']) && !isset($_POST['delete_id'])) {
+    $id = $_POST['id'];
+    $first_name = $conn->real_escape_string($_POST['first_name']);
+    $last_name = $conn->real_escape_string($_POST['last_name']);
+    $phone = $conn->real_escape_string($_POST['phone']);
+    $email = $conn->real_escape_string($_POST['email']);
+
+    $update_query = "UPDATE users SET 
+        first_name = '$first_name',
+        last_name = '$last_name',
+        phone = '$phone',
+        email = '$email'
+        WHERE id = $id";
+
+    if ($conn->query($update_query) === TRUE) {
+        header("Location: list_of_students.php?updated=1"); // Redirect after update
+        exit();
+    } else {
+        echo "Error updating record: " . $conn->error;
+    }
+}
 ?>
+
 <link rel="stylesheet" href="assets/css/list_of_students.css">
 
 <div class="container-fluid p-0">
@@ -61,7 +95,6 @@ include __DIR__ . '/../conf.php';
                                                     <img src="assets/img/photo.png" alt="Student" class="student-avatar me-2">
                                                     <div>
                                                         <h6 class="mb-0"><?= $row['first_name'] ?> <?= $row['last_name'] ?></h6>
-                                                        <!-- <small>Nursing - Year 3</small> -->
                                                     </div>
                                                 </div>
                                             </td>
@@ -74,10 +107,12 @@ include __DIR__ . '/../conf.php';
                                                         onclick="window.location.href='student_details.php?id=<?= $row['id'] ?>'">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                    <button class="btn btn-icon" title="Edit Record"><i
-                                                            class="fas fa-edit"></i></button>
-                                                    <button class="btn btn-icon" title="Delete Record"><i
-                                                            class="fas fa-trash-alt"></i></button>
+                                                    <button class="btn btn-icon" title="Edit Record" data-bs-toggle="modal" data-bs-target="#editModal" onclick="setEditData(<?= $row['id'] ?>, '<?= $row['first_name'] ?>', '<?= $row['last_name'] ?>', '<?= $row['phone'] ?>', '<?= $row['email'] ?>')">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-icon" title="Delete Record" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteData(<?= $row['id'] ?>)">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -86,52 +121,6 @@ include __DIR__ . '/../conf.php';
                                 }
                                 ?>
                             </tbody>
-                            <!-- <tbody>
-                                <tr>
-                                    <td>STU-05940</td>
-                                    <td>
-                                        <div class="student-info d-flex align-items-center">
-                                            <img src="assets/img/photo.png" alt="Student" class="student-avatar me-2">
-                                            <div>
-                                                <h6 class="mb-0">John Doe</h6>
-                                                <small>Nursing - Year 3</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>09171234567</td>
-                                    <td>john.doe@example.com</td>
-                                    <td><span class="status-badge bg-success">Active</span></td>
-                                    <td>
-                                        <div class="actions">
-                                            <button class="btn btn-icon" title="View Record"><i class="fas fa-eye"></i></button>
-                                            <button class="btn btn-icon" title="Edit Record"><i class="fas fa-edit"></i></button>
-                                            <button class="btn btn-icon" title="Delete Record"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>STU-05941</td>
-                                    <td>
-                                        <div class="student-info d-flex align-items-center">
-                                            <img src="assets/img/photo.png" alt="Student" class="student-avatar me-2">
-                                            <div>
-                                                <h6 class="mb-0">Jane Smith</h6>
-                                                <small>Nursing - Year 2</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>09953554653</td>
-                                    <td>jane.smith@example.com</td>
-                                    <td><span class="status-badge bg-secondary">Not Active</span></td>
-                                    <td>
-                                        <div class="actions">
-                                            <button class="btn btn-icon" title="View Record"><i class="fas fa-eye"></i></button>
-                                            <button class="btn btn-icon" title="Edit Record"><i class="fas fa-edit"></i></button>
-                                            <button class="btn btn-icon" title="Delete Record"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody> -->
                         </table>
                     </div>
 
@@ -150,6 +139,71 @@ include __DIR__ . '/../conf.php';
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Student Record</h5>
+                <?php if (isset($_GET['updated'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        Student record updated successfully!
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+            </div>
+            <form id="editForm" method="POST" action="edit_student.php">
+                <div class="modal-body">
+                    <input type="hidden" id="editId" name="id">
+                    <div class="mb-3">
+                        <label for="editFirstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="editFirstName" name="first_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editLastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="editLastName" name="last_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPhone" class="form-label">Phone</label>
+                        <input type="text" class="form-control" id="editPhone" name="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" name="email" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Student Record</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="deleteForm" method="POST" action="list_of_students.php">
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this record?</p>
+                    <input type="hidden" id="deleteId" name="delete_id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -220,6 +274,18 @@ include __DIR__ . '/../conf.php';
             });
         });
     });
+
+    function setEditData(id, firstName, lastName, phone, email) {
+        document.getElementById('editId').value = id;
+        document.getElementById('editFirstName').value = firstName;
+        document.getElementById('editLastName').value = lastName;
+        document.getElementById('editPhone').value = phone;
+        document.getElementById('editEmail').value = email;
+    }
+
+    function setDeleteData(id) {
+        document.getElementById('deleteId').value = id;
+    }
 </script>
 
 <?php

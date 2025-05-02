@@ -146,13 +146,13 @@ include __DIR__ . '/../conf.php';
                                         $qr = "SELECT * FROM users WHERE id = '" . $row['user_id'] . "'";
                                         $result2 = $conn->query($qr);
                                         $row2 = $result2->fetch_assoc();
-                                        ?>
+                                ?>
                                         <tr>
                                             <td><?= $row['document_name'] ?></td>
                                             <td><?= $row2['id'] ?></td>
                                             <td>
                                                 <div>
-                                                    <span><?= $row2['first_name'] ?>         <?= $row2['last_name'] ?></span>
+                                                    <span><?= $row2['first_name'] ?> <?= $row2['last_name'] ?></span>
                                                 </div>
                                             </td>
                                             <td><?= $row['document_type'] ?></td>
@@ -179,7 +179,7 @@ include __DIR__ . '/../conf.php';
                                                 </div>
                                             </td>
                                         </tr>
-                                        <?php
+                                <?php
                                     }
                                 }
                                 ?>
@@ -199,31 +199,76 @@ include __DIR__ . '/../conf.php';
                         </nav>
                     </div>
 
-                    <div class="modal fade" id="viewRecordModal" tabindex="-1" aria-labelledby="viewRecordLabel"
-                        aria-hidden="true">
+                    <div class="modal fade" id="viewRecordModal" tabindex="-1" aria-labelledby="viewRecordLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content shadow-lg border-0">
-                                <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title" id="viewRecordLabel">📄 Record Details</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                            <div class="modal-content shadow-lg border-0 rounded-4">
+                                <div class="modal-header bg-primary text-white rounded-top-4">
+                                    <h5 class="modal-title" id="viewRecordLabel">Record Details</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="record-details-grid">
-                                        <div><strong>ID:</strong> <span id="recordId"></span></div>
-                                        <div><strong>Name:</strong> <span id="recordName"></span></div>
-                                        <div><strong>Status:</strong> <span id="recordStatus"></span></div>
-                                        <div><strong>Notes:</strong> <span id="recordNotes"></span></div>
+                                <div class="modal-body px-4 py-3">
+                                    <!-- Record Details Grid -->
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <h6 class="text-secondary mb-2"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
+                                            <div class="card p-3 shadow-sm">
+                                                <div><strong>ID:</strong> <span id="recordId"><?= htmlspecialchars($records['id']) ?></span></div>
+                                                <div><strong>User ID:</strong> <span id="recordUserId"><?= htmlspecialchars($records['user_id'] ?? 'N/A') ?></span></div>
+                                                <div><strong>Status:</strong> <span id="recordStatus"><?= htmlspecialchars($records['status'] ?? 'N/A') ?></span></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 mb-3">
+                                            <h6 class="text-secondary mb-2"><i class="fas fa-file-alt me-2"></i>Document Information</h6>
+                                            <div class="card p-3 shadow-sm">
+                                                <div><strong>Document Name:</strong> <span id="recordName"><?= htmlspecialchars($records['document_name'] ?? 'N/A') ?></span></div>
+                                                <div><strong>Document Type:</strong> <span id="recordType"><?= htmlspecialchars($records['document_type'] ?? 'N/A') ?></span></div>
+                                                <div><strong>File Name:</strong> <span id="recordFileName"><?= htmlspecialchars($records['file_name'] ?? 'N/A') ?></span></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 mb-3">
+                                            <h6 class="text-secondary mb-2"><i class="fas fa-sticky-note me-2"></i>Notes</h6>
+                                            <div class="card p-3 shadow-sm">
+                                                <div id="recordNotes"><?= nl2br(htmlspecialchars($records['note'] ?? 'No notes available')) ?></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <h6 class="text-secondary mb-2"><i class="fas fa-calendar-alt me-2"></i>Entry Date</h6>
+                                            <div class="card p-3 shadow-sm">
+                                                <div id="recordEntryDate"><?= htmlspecialchars($records['entry_date'] ?? 'N/A') ?></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <h6 class="text-secondary mb-2"><i class="fas fa-calendar-check me-2"></i>Expiration Date</h6>
+                                            <div class="card p-3 shadow-sm">
+                                                <div id="recordExpDate"><?= htmlspecialchars($records['exp_date'] ?? 'N/A') ?></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <h6 class="text-secondary mb-2"><i class="fas fa-clock me-2"></i>Created At</h6>
+                                            <div class="card p-3 shadow-sm">
+                                                <div id="recordCreatedAt"><?= htmlspecialchars($records['created_at'] ?? 'N/A') ?></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <h6 class="text-secondary mb-2"><i class="fas fa-history me-2"></i>Updated At</h6>
+                                            <div class="card p-3 shadow-sm">
+                                                <div id="recordUpdatedAt"><?= htmlspecialchars($records['updated_at'] ?? 'N/A') ?></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer bg-light">
-                                    <button type="button" class="btn btn-outline-secondary"
-                                        data-bs-dismiss="modal">Close</button>
+                                <div class="modal-footer bg-light rounded-bottom-4 px-4 py-3">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -253,7 +298,7 @@ include __DIR__ . '/../conf.php';
     }
 
     // Search Filter
-    document.getElementById('searchInput').addEventListener('keyup', function () {
+    document.getElementById('searchInput').addEventListener('keyup', function() {
         const input = this.value.toLowerCase();
         const rows = document.querySelectorAll('.medical-records-table tbody tr');
 
@@ -290,7 +335,7 @@ include __DIR__ . '/../conf.php';
     }
 
     document.querySelectorAll('.view-record').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function() {
             const recordData = JSON.parse(this.getAttribute('data-record'));
             console.log(recordData);
 
